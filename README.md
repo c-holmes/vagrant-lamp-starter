@@ -1,0 +1,99 @@
+### VM stuff
+```
+vagrant box add ubuntu/trusty64
+vagrant init ubuntu/trusty64
+vagrant up
+vagrant halt
+vagrant plugin install vagrant-vbguest
+vagrant reload
+```
+
+### Server Stuff
+update and upgrade the package manager and make sure everything is up to date.
+```
+sudo apt-get update && sudo apt-get upgrade
+```
+
+### Download Apache2
+```
+sudo apt-get install apache2 -y
+sudo nano /etc/apache2/apache2.conf
+```
+
+### paste at bottom
+ServerName localhost
+
+```
+sudo service apache2 restart
+sudo apache2ctl configtest
+```
+
+### update Vagrantfile
+```
+config.vm.network "private_network", ip: "192.168.33.10"
+vagrant reload
+```
+
+### update your host file to map a local test domain
+
+### Download PHP7
+```
+sudo apt-add-repository ppa:ondrej/php
+sudo apt-get update
+sudo apt-get install php7.1
+```
+
+### Add Synced Folder
+```
+config.vm.synced_folder "LOCAL", "VIRTUAL"
+```
+
+### Install MySQL
+```
+sudo apt-get install mysql-server php7.1-mysql
+```
+
+### Configure MySQL - Comment out skip-external-locking and bind-address
+```
+sudo nano /etc/mysql/my.cnf
+```
+
+### Restart Apache & MySQL
+```
+sudo service apache2 restart
+sudo service mysql restart
+```
+
+### login to MySQL and Create User
+```
+mysql -u root -p
+CREATE USER 'user'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+```
+
+### Restart Apache & MySQL
+```
+sudo service apache2 restart
+sudo service mysql restart
+```
+
+### Local setup to access MySQL - open VagrantfIle
+```
+config.vm.network "forwarded_port", guest: 3306, host: 3306 
+vagrant reload
+```
+
+### Using a SQL client like SequelPro
+For MySQL, the credentials will be:
+Host: 192.168.33.10
+Username: user
+Password: password
+Port: 3306
+
+For SSH, they will be:
+Host: 127.0.0.1
+User: vagrant
+Key: ~/.vagrant.d/insecure_private_key
+Port: 2222
+
